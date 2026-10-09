@@ -1,10 +1,11 @@
+
 # 模擬案件\_書籍レビューアプリ BookShelf
 
 ## 概要
 
 ## ER図
 
-<img width="1091" height="991" alt="bookshelf drawio (6)" src="https://github.com/user-attachments/assets/c5d97aeb-4b79-4514-b055-9936da762130" />
+<img width="1302" height="802" alt="bookshelf" src="https://github.com/user-attachments/assets/60cddb17-be1b-4703-aef0-f2b76fba75b6" />
 
 ## 環境構築手順
 
