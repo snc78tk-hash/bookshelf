@@ -1,0 +1,60 @@
+<?php
+
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\GenreController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\RankingController;
+use App\Http\Controllers\ReadingPlanController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReviewController;
+use Illuminate\Support\Facades\Route;
+
+// ---------------------------------------------
+// 公開ページ（ログイン不要）
+// ---------------------------------------------
+Route::get('/', fn() => redirect()->route('books.index'))->name('home');
+
+Route::get('/books', [BookController::class, 'index'])->name('books.index');
+Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
+
+Route::get('/ranking', [RankingController::class, 'index'])->name('ranking.index');
+
+// ---------------------------------------------
+// 認証必須ページ
+// ---------------------------------------------
+Route::middleware('auth')->group(function () {
+
+    // 書籍
+    Route::get('/books/isbn/{isbn}', [BookController::class, 'searchIsbn'])
+        ->name('books.searchIsbn');
+    Route::resource('books', BookController::class)->except(['index', 'show']);
+
+    // レビュー
+    Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
+    Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+    Route::post('/reviews/{review}/like', [LikeController::class, 'toggle'])->name('reviews.like');
+
+    // お気に入り
+    Route::post('/books/{book}/favorite', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+
+    // ジャンル
+    Route::resource('genres', GenreController::class);
+
+    // レポート
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+
+    // 読書計画
+    Route::resource('reading-plans', ReadingPlanController::class);
+    Route::post('/reading-plans/{readingPlan}/complete', [ReadingPlanController::class, 'complete'])
+        ->name('reading-plans.complete');
+
+    // 通知
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('notifications/{notification}/read', [NotificationController::class, 'markAsRead'])
+        ->name('notifications.read');
+});
